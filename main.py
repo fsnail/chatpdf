@@ -13,7 +13,7 @@ import tempfile
 import os
 
 #제목
-st.title("ChatPDF")
+st.title("CSLEE's ChatPDF")
 st.write("---")
 
 #파일 업로드
