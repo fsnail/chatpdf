@@ -17,7 +17,7 @@ st.title("ChatPDF")
 st.write("---")
 
 #파일 업로드
-uploaded_file = st.file_uploader("Choose a file")
+uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
 st.write("---")
 
 def pdf_to_document(uploaded_file):
