@@ -17,26 +17,24 @@ st.title("CSLEE's ChatPDF")
 st.write("---")
 
 #파일 업로드
-uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
+uploaded_files = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'], accept_multiple_files=True)
 st.write("---")
 
-def pdf_to_document(uploaded_file):
+def pdfs_to_documents(uploaded_files):
     temp_dir = tempfile.TemporaryDirectory()
-    temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
-    with open(temp_filepath, "wb") as f:
-        f.write(uploaded_file.getvalue())
-    loader = PyPDFLoader(temp_filepath)
+    temp_filepaths = []
+    for uploaded_file in uploaded_files:
+        temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
+        with open(temp_filepath, "wb") as f:
+            f.write(uploaded_file.getvalue())
+        temp_filepaths.append(temp_filepath)
+    loader = PyPDFLoader(temp_filepaths)
     pages = loader.load_and_split()
     return pages
 
 #업로드 되면 동작하는 코드
-if uploaded_file is not None:
-    pages = pdf_to_document(uploaded_file)
-
-
-    #Loader
-    #loader = PyPDFLoader("addr.pdf")
-    #pages = loader.load_and_split()
+if uploaded_files:
+    pages = pdfs_to_documents(uploaded_files)
 
     #Split
     text_splitter = RecursiveCharacterTextSplitter(
@@ -64,14 +62,7 @@ if uploaded_file is not None:
 
     if st.button('질문하기'):
         with st.spinner('wait for it...'):
-        #질문 답변하기
-        # from langchain.chains import RetrievalQA
-        # llm = ChatOpenAI(temperature=0)
-        # retriever_from_llm = MultiQueryRetriever.from_llm(
-        #     retriever=db.as_retriever(), llm=llm
-        # )
-
-        #질문과 답변
+            #질문 답변하기
             from langchain.chains import RetrievalQA
             llm = ChatCompletion(model_name = "gpt-4.0-turbo",temperature=0)
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
