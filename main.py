@@ -27,7 +27,7 @@ def pdfs_to_documents(uploaded_files):
         temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
         with open(temp_filepath, "wb") as f:
             f.write(uploaded_file.getvalue())
-        temp_filepaths.append(temp_filepath)
+        temp_filepaths.append(uploaded_file)
     return temp_filepaths
 
 # 업로드 되면 동작하는 코드
