@@ -12,12 +12,12 @@ import streamlit as st
 import tempfile
 import os
 
-#제목
+# 제목
 st.title("CSLEE's ChatPDF")
 st.write("---")
 
-#파일 업로드
-uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
+# 파일 업로드
+uploaded_files = st.file_uploader("PDF 파일을 선택해 주세요.", type=['pdf'], accept_multiple_files=True)
 st.write("---")
 
 def pdf_to_document(uploaded_file):
@@ -29,51 +29,42 @@ def pdf_to_document(uploaded_file):
     pages = loader.load_and_split()
     return pages
 
-#업로드 되면 동작하는 코드
-if uploaded_file is not None:
-    pages = pdf_to_document(uploaded_file)
+# 업로드 되면 동작하는 코드
+if uploaded_files is not None:
+    pages = []
+    for uploaded_file in uploaded_files:
+        pages.extend(pdf_to_document(uploaded_file))
 
-
-    #Loader
-    #loader = PyPDFLoader("addr.pdf")
-    #pages = loader.load_and_split()
-
-    #Split
+    # Split
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
-        chunk_size = 300, # 100글자 단위로
-        chunk_overlap  = 20, # 중간에 짤리면 이상할 수 있으므로 오버랩하는 부분은 중복되도록 하는 거다.
-        length_function = len,
-        is_separator_regex = False,
+        chunk_size=300,  # 100글자 단위로
+        chunk_overlap=20,  # 중간에 짤리면 이상할 수 있으므로 오버랩하는 부분은 중복되도록 하는 거다.
+        length_function=len,
+        is_separator_regex=False,
     )
 
     texts = text_splitter.split_documents(pages)
 
-    #Embedding
+    # Embedding
     from langchain.embeddings import OpenAIEmbeddings
     embeddings_model = OpenAIEmbeddings()
 
     # load it into Chroma
     from langchain.vectorstores import Chroma
     db = Chroma.from_documents(texts, embeddings_model)  # 여기까지가 DB에 저장까지 한거다. 디렉토리를 설정하면 저장해서 쓸수 있겠다.
-                                                        # (texts, embeddings_model, persist_directory="/chroma")
+    # (texts, embeddings_model, persist_directory="/chroma")
 
-    #Question
+    # Question
     st.header("PDF에게 질문해 보세요.")
     question = st.text_input('질문을 입력하세요.')
 
     if st.button('질문하기'):
         with st.spinner('wait for it...'):
-        #질문 답변하기
-        # from langchain.chains import RetrievalQA
-        # llm = ChatOpenAI(temperature=0)
-        # retriever_from_llm = MultiQueryRetriever.from_llm(
-        #     retriever=db.as_retriever(), llm=llm
-        # )
-
-        #질문과 답변
+            # 질문 답변하기
             from langchain.chains import RetrievalQA
-            llm = ChatOpenAI(model_name = "gpt-4",temperature=0)
+
+            llm = ChatOpenAI(model_name="gpt-4", temperature=0)
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
             result = qa_chain({"query": question})
             st.write(result["result"])
