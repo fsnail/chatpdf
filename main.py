@@ -6,7 +6,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 #load_dotenv()
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from openai import ChatCompletion
+from langchain.chat_models import ChatOpenAI
 #from langchain.retrievers.multi_query import MultiQueryRetriever
 import streamlit as st
 import tempfile
@@ -73,7 +73,7 @@ if uploaded_file is not None:
 
         #질문과 답변
             from langchain.chains import RetrievalQA
-            llm = ChatCompletion(model_name = "gpt-4.0-turbo",temperature=0)
+            llm = ChatOpenAI(model_name = "gpt-4",temperature=0)
             qa_chain = RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
             result = qa_chain({"query": question})
             st.write(result["result"])
