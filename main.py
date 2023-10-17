@@ -1,3 +1,5 @@
+아래 코드는 pdf 파일을 하나만 선택하도록 되어 있어. 하나씩 여러 개의 파일을 업로드 하려면 어느 부분을 바꿔야 하는지 알려주고 주석을 달아야 된다면 주석을 달아주고 새롭게 추가를 해야하면 추가해줘. 그리고 검색할 때는 업로드한 여러개의 파일 내용에서 결과를 찾을 수 있도록 하는 부분도 동일하게 주석과 추가를 해줘
+
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
@@ -17,21 +19,35 @@ st.title("CSLEE's ChatPDF")
 st.write("---")
 
 #파일 업로드
-uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
+#uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
+uploaded_files = st.file_uploader("PDF파일들을 선택해 주세요.", type=['pdf'], accept_multiple_files=True) 
 st.write("---")
 
-def pdf_to_document(uploaded_file):
-    temp_dir = tempfile.TemporaryDirectory()
-    temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
-    with open(temp_filepath, "wb") as f:
-        f.write(uploaded_file.getvalue())
-    loader = PyPDFLoader(temp_filepath)
-    pages = loader.load_and_split()
-    return pages
+#def pdf_to_document(uploaded_file):
+#    temp_dir = tempfile.TemporaryDirectory()
+#    temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
+#    with open(temp_filepath, "wb") as f:
+#        f.write(uploaded_file.getvalue())
+#    loader = PyPDFLoader(temp_filepath)
+#    pages = loader.load_and_split()
+#    return pages
+
+def pdfs_to_documents(uploaded_files):
+    documents = []
+    for uploaded_file in uploaded_files:
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
+        with open(temp_filepath, "wb") as f:
+            f.write(uploaded_file.getvalue())
+        loader = PyPDFLoader(temp_filepath)
+        pages = loader.load_and_split()
+        documents.extend(pages)  # 각 파일의 페이지들을 모두 documents 리스트에 추가합니다.
+    return documents
 
 #업로드 되면 동작하는 코드
 if uploaded_file is not None:
-    pages = pdf_to_document(uploaded_file)
+    pages = pdfs_to_document(uploaded_files)
+#    pages = pdf_to_document(uploaded_file)
 
 
     #Loader
@@ -48,6 +64,7 @@ if uploaded_file is not None:
     )
 
     texts = text_splitter.split_documents(pages)
+
 
     #Embedding
     from langchain.embeddings import OpenAIEmbeddings
