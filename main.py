@@ -24,7 +24,7 @@ st.write("---")
 
 #파일 업로드
 #uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
-uploaded_files = st.file_uploader("PDF파일들을 선택해 주세요.", type=['pdf'], accept_multiple_files=True) 
+uploaded_files = st.file_uploader("PDF파일들을 선택해 주세요(Image PDF는 안되요).", type=['pdf'], accept_multiple_files=True) 
 st.write("---")
 
 #def pdf_to_document(uploaded_file):
