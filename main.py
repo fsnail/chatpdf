@@ -43,7 +43,7 @@ def pdfs_to_documents(uploaded_files):
     return documents
 
 #업로드 되면 동작하는 코드
-if uploaded_file is not None:
+if uploaded_files is not None:
     pages = pdfs_to_document(uploaded_files)
 #    pages = pdf_to_document(uploaded_file)
 
