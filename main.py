@@ -13,7 +13,7 @@ import tempfile
 import os
 
 #제목
-st.title("우리대학 인공지능 입시도우미")
+st.title("DST 인공지능 입시도우미")
 st.write("---")
 
 #파일 업로드
