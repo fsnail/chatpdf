@@ -15,6 +15,12 @@ import os
 #제목
 st.title("DST 인공지능 입시도우미")
 st.write("---")
+st.write("* 궁금한 것을 물어보세요.")
+st.write("1. 컴퓨터소프트웨어공학과에서는 무엇을 배우나요?")
+st.write("2. 수시접수 기간이 어떻게 되나요?")
+st.write("3. 치위생과는 몇등급이면 갈 수 있나요?")
+st.write("4. 입학관련 문의를 하고 싶은데 어디로 전화해야 하죠?")
+st.write("---")
 
 #파일 업로드
 #uploaded_file = st.file_uploader("PDF파일을 선택해 주세요.",type=['pdf'])
